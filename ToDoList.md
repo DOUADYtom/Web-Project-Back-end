@@ -2,7 +2,7 @@
 
 1. - [ ] User creation, Public
 2. - [ ] User delete, Private to concerned user and admin
-3. - [ ] User update, Private to concerned user and admin
+3. - [ ] User update, Private to concerned user
 
 4. - [ ] Monument creation, Private to creator
 5. - [ ] Monument delete, Private to concerned creator and admin
