@@ -10,7 +10,10 @@ async function main(){
     try{
         await client.connect();
 
-        await addPeople(client, {first_name: "sam", last_name: "liprandi", age: 22});
+        client.db("db1").collection("People").find({}).toArray(function(err, result) {
+            if (err) throw err;
+            console.log(result);
+        });
 
     } catch(e){
         console.error(e);
