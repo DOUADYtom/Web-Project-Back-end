@@ -16,7 +16,7 @@ const getMonumentById = asyncHandler(async (req, res) => {
     }
     const id = req.params.id;
     try {
-        const monument = await Monument.findOne(id).lean().exec();
+        const monument = await Monument.findById(id).lean().exec();
         if (!monument) {
             return res.status(400).json({message: `The searched monument with the id ${id} does not exist`});
         }
@@ -58,7 +58,7 @@ const updateMonumentById = asyncHandler(async (req, res) => {
     }
     const id = req.params.id;
     const matchType = (array, type) => array.reduce((a,b) => (typeof b === type) && a, true);
-    const cond = (typeof req.body.name !== 'string' && typeof req.body.name !== 'string') ||
+    const cond = (req.body.name !== undefined && typeof req.body.name !== 'string') ||
         (req.body.description !== undefined && typeof req.body.description !== 'string') ||
         (req.body.images !== undefined && (!Array.isArray(req.body.images) || !matchType(req.body.images, 'string'))) ||
         (req.body.country !== undefined && typeof req.body.country !== 'string') ||

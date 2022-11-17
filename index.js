@@ -7,9 +7,11 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const path = require('path');
 const mongoose = require('mongoose');
+const monumentRouter = require('./routes/monumentRouter');
 
 const app = express();
 const port = process.env.PORT;
+const DB_URI = Boolean(process.env.DB_USE_ONLINE)?process.env.DB_URI:process.env.DB_URI_LOCAL;
 
 
 // Middlewares
@@ -23,9 +25,7 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 
 // Routes
 
-app.get('/', (req, res) => {
-  res.send('Hello World !');
-})
+app.use('/monument', monumentRouter);
 
 
 // Not found ressource
@@ -51,7 +51,7 @@ app.use(errorHandler);
 
 const connectDB = async () => {
   try {
-      await mongoose.connect(process.env.DB_URI, { useNewUrlParser: true });
+      await mongoose.connect(DB_URI, { useNewUrlParser: true });
   } catch (err) {
       console.log(err)
   }
