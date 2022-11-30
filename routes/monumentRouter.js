@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const monumentController = require('../controllers/monumentsContoller');
+const monumentsController = require('../controllers/monumentsController');
 
 router.route('/')
-    .get(monumentController.getAllMonuments)
-    .post(monumentController.createNewMonument);
+    .get(monumentsController.getAllMonuments)
+    .post(monumentsController.createNewMonument);
 
 router.route('/:id')
-    .get(monumentController.getMonumentById)
-    .patch(monumentController.updateMonumentById)
-    .delete(monumentController.deleteMonumentById);
+    .get(monumentsController.getMonumentById)
+    .patch(monumentsController.updateMonumentById)
+    .delete(monumentsController.deleteMonumentById);
 
 module.exports = router;

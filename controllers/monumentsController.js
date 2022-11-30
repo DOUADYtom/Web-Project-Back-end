@@ -1,7 +1,13 @@
-const Monument = require('./../models/Monument');
+const Monument = require('../models/Monument');
 const asyncHandler = require('express-async-handler');
+//TODO : stats none when create a new monument
+
+// @desc Create a new monument
+// @route POST /monument
+// @access Public
 
 const getAllMonuments = asyncHandler(async (req, res) => {
+    console.log(req.query.name)
     try {
         const monuments = await Monument.find().lean();
         res.status(200).json(monuments);
@@ -9,6 +15,11 @@ const getAllMonuments = asyncHandler(async (req, res) => {
         return res.status(500).json({message: "Internal database error"});
     }
 });
+
+
+// @desc Get monument by id
+// @route GET /monument/:id
+// @access Public
 
 const getMonumentById = asyncHandler(async (req, res) => {
     if (!req.params.id) {
@@ -26,7 +37,14 @@ const getMonumentById = asyncHandler(async (req, res) => {
     }
 });
 
+
+// @desc Create a new monument
+// @route POST /monument
+// @access Creator, Admin
+
 const createNewMonument = asyncHandler(async (req, res) => {
+    delete req.body.stats;
+    console.log(req.body)
     if(!req.body.name){
         return res.status(400).json({message: "The monument must have a name"});
     }
@@ -51,6 +69,11 @@ const createNewMonument = asyncHandler(async (req, res) => {
         return res.status(500).json({message: "Internal database error"});
     }
 });
+
+
+// @desc Update a monument
+// @route PUT /monument/:id
+// @access Creator, Admin
 
 const updateMonumentById = asyncHandler(async (req, res) => {
     if (!req.params.id) {
@@ -78,6 +101,11 @@ const updateMonumentById = asyncHandler(async (req, res) => {
         return res.status(500).json({message: "Internal database error"});
     }
 });
+
+
+// @desc Delete a monument
+// @route DELETE /monument/:id
+// @access Creator, Admin
 
 const deleteMonumentById = asyncHandler(async (req, res) => {
     if (!req.params.id) {

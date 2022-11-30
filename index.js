@@ -5,9 +5,12 @@ const { logger, logEvents } = require('./middlewares/logs');
 const errorHandler = require('./middlewares/errorHandler');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const corsOptions = require('./config/corsOptions');
 const path = require('path');
 const mongoose = require('mongoose');
 const monumentRouter = require('./routes/monumentRouter');
+const reviewRouter = require('./routes/reviewRouter');
+const userRouter = require('./routes/userRouter');
 
 const app = express();
 const port = process.env.PORT;
@@ -16,6 +19,7 @@ const DB_URI = (process.env.DB_USE_ONLINE==="true")?process.env.DB_URI:process.e
 // Middlewares
 
 app.use(logger);
+// app.use(cors(corsOptions)); // TODO : uncomment at the end of the project 
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
@@ -25,7 +29,8 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 // Routes
 
 app.use('/monument', monumentRouter);
-
+app.use('/review', reviewRouter);
+app.use('/user', userRouter);
 
 // Not found ressource
 

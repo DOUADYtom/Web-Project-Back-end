@@ -22,3 +22,9 @@
 17. - [ ] User delete already visited monument, Private to user
 18. - [ ] To be visited monument get by user, Private to user
 19. - [ ] Already visited monument get by user, Private to user
+
+update la moyenne de monument à chaque ajout de review : furmule : (monument.avgRating * monument.nbReviews + review.newRating) / (monument.nbReviews + 1)
+page d'accueil : 
+    limité à 10 monuments, 
+    parametre de query (limit=10), 
+    sort by mostViewed, mostLiked, mostRecent, mustVisited, mustToBeVisited, mostTrend(mostToBeVisited du dernier mois).
