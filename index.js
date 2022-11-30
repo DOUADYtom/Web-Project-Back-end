@@ -11,8 +11,7 @@ const monumentRouter = require('./routes/monumentRouter');
 
 const app = express();
 const port = process.env.PORT;
-const DB_URI = Boolean(process.env.DB_USE_ONLINE)?process.env.DB_URI:process.env.DB_URI_LOCAL;
-
+const DB_URI = (process.env.DB_USE_ONLINE==="true")?process.env.DB_URI:process.env.DB_URI_LOCAL;
 
 // Middlewares
 
