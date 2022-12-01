@@ -65,7 +65,7 @@ const createNewUser = asyncHandler(async (req, res) => {
         return res.status(400).json({message: "Username must contain at least 3 characters and less than 20"});
     }
 
-    const emailRegex = new RegExp(`^*@*.*`, 'i');
+    const emailRegex = new RegExp("^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)$");
     if (!emailRegex.test(email)) {
         return res.status(400).json({message: "Please enter a valid email"});
     }
