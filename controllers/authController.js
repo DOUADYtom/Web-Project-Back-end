@@ -105,11 +105,11 @@ const refresh = (req, res) => {
 
 const logout = (req, res) => {
     const cookies = req.cookies;
-    if (!cookies?.jwt) {
+    if (!cookies?.refreshToken) {
         return res.status(204); // No content
     }
 
-    res.clearCookie('jtw', {httpOnly: true, secure: false, sameSite: 'None'});
+    res.clearCookie('refreshToken', {httpOnly: true, secure: false, sameSite: 'None'});
     res.json({message: 'Cookie cleared'});
 };
 
