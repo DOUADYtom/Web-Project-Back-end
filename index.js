@@ -8,6 +8,7 @@ const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
 const path = require('path');
 const mongoose = require('mongoose');
+const authRouter = require('./routes/authRouter');
 const monumentRouter = require('./routes/monumentRouter');
 const reviewRouter = require('./routes/reviewRouter');
 const userRouter = require('./routes/userRouter');
@@ -28,6 +29,7 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 
 // Routes
 
+app.use('/auth', authRouter);
 app.use('/monument', monumentRouter);
 app.use('/review', reviewRouter);
 app.use('/user', userRouter);

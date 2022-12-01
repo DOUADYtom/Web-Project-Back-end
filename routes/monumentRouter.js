@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const monumentsController = require('../controllers/monumentsController');
+const verifyJWT = require('../middlewares/verifyJWT');
+
+router.use(verifyJWT);
+
 
 router.route('/')
     .get(monumentsController.getAllMonuments)

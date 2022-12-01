@@ -55,6 +55,22 @@ const createNewUser = asyncHandler(async (req, res) => {
         return res.status(400).json({message: "Please fill all the fields"});
     }
 
+    const pwdRegex = new RegExp("^(?=.[a-z])(?=.[A-Z])(?=.*[0-9])(?=.{8,20}$)");
+    if (!pwdRegex.test(password)) {
+        return res.status(400).json({message: "Password must contain at least 8 characters, one uppercase, one lowercase and one number"});
+    }
+
+    const usernameRegex = new RegExp("^(?=.{3,20}$)");
+    if (!usernameRegex.test(username)) {
+        return res.status(400).json({message: "Username must contain at least 3 characters and less than 20"});
+    }
+
+    const emailRegex = new RegExp(`^*@*.*`, 'i');
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({message: "Please enter a valid email"});
+    }
+
+    
     try {
         // check for duplicate username
         const duplicateUsername = await User.findOne({username}).lean().exec();
