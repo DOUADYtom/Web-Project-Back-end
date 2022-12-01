@@ -7,9 +7,20 @@ const asyncHandler = require('express-async-handler');
 // @access Public
 
 const getAllMonuments = asyncHandler(async (req, res) => {
-    console.log(req.query.name)
+    // TODO : limit + mode
+    // mode : 0 = all, 1 = element(name, images, country, countryCode, city, avgRating)
+    const mode = req.query.mode ? parseInt(req.query.mode) : 0;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+
     try {
-        const monuments = await Monument.find().lean();
+        let monuments;
+        if (mode == 1){ // select only name, images, country, countryCode, city, avgRating
+            monuments = await Monument.find().select('name images country countryCode city stats.avgRating').lean().limit(limit);
+            console.log(mode);
+        }else if (mode == 0){ // select all
+            monuments = await Monument.find().lean().limit(limit);
+            console.log(mode);
+        }
         res.status(200).json(monuments);
     } catch {
         return res.status(500).json({message: "Internal database error"});
@@ -44,7 +55,6 @@ const getMonumentById = asyncHandler(async (req, res) => {
 
 const createNewMonument = asyncHandler(async (req, res) => {
     delete req.body.stats;
-    console.log(req.body)
     if(!req.body.name){
         return res.status(400).json({message: "The monument must have a name"});
     }

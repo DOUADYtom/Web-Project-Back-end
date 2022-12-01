@@ -6,7 +6,7 @@ const asyncHandler = require('express-async-handler');
 
 // @desc Get all users
 // @route GET /users
-// @access Private
+// @access Private (admin only)
 
 const getAllUsers = asyncHandler(async (req, res) => {
     try {
@@ -22,7 +22,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 // @desc Get user by id
 // @route GET /users/:id
-// @access Private
+// @access Private (admin and user concerned only)
 
 const getUserById = asyncHandler(async (req, res) => {
     if (!req.params.id) {
@@ -43,11 +43,10 @@ const getUserById = asyncHandler(async (req, res) => {
 
 // @desc Create a new user
 // @route POST /users
-// @access Private
+// @access Public 
 
 const createNewUser = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
-
     const cond = (req.body.username !== undefined && typeof req.body.username !== 'string') ||
         (req.body.password !== undefined && typeof req.body.password !== 'string') ||
         (req.body.email !== undefined && typeof req.body.email !== 'string');
@@ -90,7 +89,7 @@ const createNewUser = asyncHandler(async (req, res) => {
 
 // @desc Update a user
 // @route PUT /users/:id
-// @access Private
+// @access Private (user concerned only)
 
 const updateUserById = asyncHandler(async (req, res) => {
     if (!req.params.id) {
@@ -145,7 +144,7 @@ const updateUserById = asyncHandler(async (req, res) => {
 
 // @desc Delete a user
 // @route DELETE /users/:id
-// @access Private
+// @access Private (user concerned only)
 
 const deleteUserById = asyncHandler(async (req, res) => {
     try {
@@ -155,7 +154,7 @@ const deleteUserById = asyncHandler(async (req, res) => {
         return res.status(400).json({message: "delete_reviews query parameter must be an Integer"});
     }
 
-    if (!req.params.id) {
+    if (!req.params.id ||!req.params.delete_reviews || !req.params.password) {
         return res.status(400).json({message: "No id find"});
     }
     try {
@@ -164,6 +163,10 @@ const deleteUserById = asyncHandler(async (req, res) => {
         
         if (!user) {
             return res.status(400).json({message: `No user found with id ${id}`});
+        }
+
+        if (req.body.password) {
+            user.password = await bcrypt.hash(req.body.password, 10);
         }
         
         const reviews = await Review.findOne({idUser: id}).lean().exec();
