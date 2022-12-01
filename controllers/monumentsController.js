@@ -1,25 +1,21 @@
 const Monument = require('../models/Monument');
 const asyncHandler = require('express-async-handler');
-//TODO : stats none when create a new monument
-
 // @desc Create a new monument
 // @route POST /monument
 // @access Public
 
 const getAllMonuments = asyncHandler(async (req, res) => {
-    // TODO : limit + mode
+    // TODO : pas de limite si pas de limite en param
     // mode : 0 = all, 1 = element(name, images, country, countryCode, city, avgRating)
     const mode = req.query.mode ? parseInt(req.query.mode) : 0;
-    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
 
     try {
         let monuments;
         if (mode == 1){ // select only name, images, country, countryCode, city, avgRating
             monuments = await Monument.find().select('name images country countryCode city stats.avgRating').lean().limit(limit);
-            console.log(mode);
         }else if (mode == 0){ // select all
             monuments = await Monument.find().lean().limit(limit);
-            console.log(mode);
         }
         res.status(200).json(monuments);
     } catch {
