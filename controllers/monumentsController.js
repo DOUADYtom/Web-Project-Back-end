@@ -76,7 +76,7 @@ const getMonumentById = asyncHandler(async (req, res) => {
     }
     const id = req.params.id;
     try {
-        const monument = await Monument.findById(id).lean().exec();
+        const monument = await Monument.findById(id).exec();
         if (!monument) {
             return res.status(400).json({message: `The searched monument with the id ${id} does not exist`});
         }
