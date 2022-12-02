@@ -10,12 +10,44 @@ const getAllMonuments = asyncHandler(async (req, res) => {
     const mode = req.query.mode ? parseInt(req.query.mode) : 0;
     const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
 
+    let sort = req.query.sort ? req.query.sort : "date";
+    // mostViewed, mostLiked, mostRecent, mustVisited, mustToBeVisited, mostTrend
+    const sortModes = ['date', 'mostViewed', 'mostLiked', 'mostRecent', 'mustVisited', 'mustToBeVisited', 'mostTrend'];
+
+    if (!sortModes.includes(sort)){
+        sort = "date";
+    }
+
+    let sortBy;
+    switch(sort) {
+        case "date":
+            sortBy = {"createdAt": -1};
+            break;
+        case "mostViewed":
+            sortBy = { "stats.nbViews": -1 };
+            break;
+        case "mostLiked":
+            sortBy = { "stats.avgRating": -1 };
+            break;
+        case "mostRecent":
+            sortBy = { "stats.nbReviews": -1 };
+            break;
+        case "mustVisited":
+            sortBy = { "stats.visited": -1 };
+            break;
+        case "mustToBeVisited":
+            sortBy = { "stats.toBeVisited": -1 };
+            break;
+        default:
+            sortBy = {"createdAt": -1};
+    } 
+
     try {
         let monuments;
         if (mode == 1){ // select only name, images, country, countryCode, city, avgRating
-            monuments = await Monument.find().select('name images country countryCode city stats.avgRating').lean().limit(limit);
+            monuments = await Monument.find().sort(sortBy).select('name images country countryCode city stats.avgRating').lean().limit(limit);
         }else if (mode == 0){ // select all
-            monuments = await Monument.find().limit(limit).lean();
+            monuments = await Monument.find().sort(sortBy).limit(limit).lean();
         }
         res.status(200).json(monuments);
     } catch {

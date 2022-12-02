@@ -11,10 +11,12 @@ router.route('/')
 router.use(verifyJWT);
 
 router.route('/visited/:id')
+    .get(usersController.getVisitedMonuments)
     .post(usersController.addVisitedMonument)
     .delete(usersController.deleteVisitedMonument);
 
 router.route('/toVisit/:id')
+    .get(usersController.getToVisitMonuments)
     .post(usersController.addToVisitMonument)
     .delete(usersController.deleteToVisitMonument);
 

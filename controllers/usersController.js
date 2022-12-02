@@ -217,19 +217,38 @@ const deleteUserById = asyncHandler(async (req, res) => {
 // @route GET /users/:id/toVisitMonuments
 // @access Private (user concerned only)
 
+const getToVisitMonuments = asyncHandler(async (req, res) => {
+    if (!req.params.id) {
+        return res.status(400).json({message: "No user id find"});
+    }
+    try {
+        const id = req.params.id;
+        const user = await User.findById(id).select('toVisitMonuments').lean().exec();
+        if (!user) {
+            return res.status(400).json({message: `No user found with id ${id}`});
+        }
+        const toVisitMonuments = await Monument.find({_id: {$in: user.toVisitMonuments}}).lean().exec();
+        if (!toVisitMonuments) {
+            return res.status(400).json({message: `No toVisitMonuments found for user ${user.username}`});
+        }
+        res.status(200).json(toVisitMonuments);
+    } catch {
+        return res.status(500).json({message: "Internal database error"});
+    }
+});
 
 // @desc add a ToVisit monument in toVisitMonuments list
 // @route POST /users/:userId/toVisitMonument
 // @access Private
 
 const addToVisitMonument = asyncHandler(async (req, res) => {
-    if (!req.params.userId) {
+    if (!req.params.id) {
         return res.status(400).json({message: "No userId find"});
     }
     if (!req.body.monumentId) {
         return res.status(400).json({message: "No monumentId find"});
     }
-    const userId = req.params.userId;
+    const userId = req.params.id;
     const monumentId = req.body.monumentId;
     try {
         const user = await User.findById(userId);
@@ -255,13 +274,13 @@ const addToVisitMonument = asyncHandler(async (req, res) => {
 // @access Private
 
 const deleteToVisitMonument = asyncHandler(async (req, res) => {
-    if (!req.params.userId) {
+    if (!req.params.id) {
         return res.status(400).json({message: "No userId find"});
     }
     if (!req.body.monumentId) {
         return res.status(400).json({message: "No monumentId find"});
     }
-    const userId = req.params.userId;
+    const userId = req.params.id;
     const monumentId = req.body.monumentId;
     try {
         const user = await User.findById(userId);
@@ -283,18 +302,43 @@ const deleteToVisitMonument = asyncHandler(async (req, res) => {
     }
 });
 
+
+// @desc Get all ToVisit monuments in monumentsVisited list
+// @route GET /users/:id/monumentsVisited
+// @access Private (user concerned only)
+
+const getVisitedMonuments = asyncHandler(async (req, res) => {
+    if (!req.params.id) {
+        return res.status(400).json({message: "No user id find"});
+    }
+    try {
+        const id = req.params.id;
+        const user = await User.findById(id).select('monumentsVisited').lean().exec();
+        if (!user) {
+            return res.status(400).json({message: `No user found with id ${id}`});
+        }
+        const toMonumentsVisited = await Monument.find({_id: {$in: user.monumentsVisited}}).lean().exec();
+        if (!toMonumentsVisited) {
+            return res.status(400).json({message: `No monumentsVisited found for user ${user.username}`});
+        }
+        res.status(200).json(toMonumentsVisited);
+    } catch {
+        return res.status(500).json({message: "Internal database error"});
+    }
+});
+
 // @desc add a visited monument in monumentsVisited list
 // @route POST /users/:userId/toVisitMonument
 // @access Private
 
 const addVisitedMonument = asyncHandler(async (req, res) => {
-    if (!req.params.userId) {
+    if (!req.params.id) {
         return res.status(400).json({message: "No userId find"});
     }
     if (!req.body.monumentId) {
         return res.status(400).json({message: "No monumentId find"});
     }
-    const userId = req.params.userId;
+    const userId = req.params.id;
     const monumentId = req.body.monumentId;
     try {
         const user = await User.findById(userId);
@@ -321,13 +365,13 @@ const addVisitedMonument = asyncHandler(async (req, res) => {
 
 const deleteVisitedMonument = asyncHandler(async (req, res) => {
 
-    if (!req.params.userId) {
+    if (!req.params.id) {
         return res.status(400).json({message: "No userId find"});
     }
     if (!req.body.monumentId) {
         return res.status(400).json({message: "No monumentId find"});
     }
-    const userId = req.params.userId;
+    const userId = req.params.id;
     const monumentId = req.body.monumentId;
     try {
         const user = await User.findById(userId);
@@ -351,8 +395,10 @@ module.exports = {
     getAllUsers,
     updateUserById,
     deleteUserById,
+    getToVisitMonuments,
     addToVisitMonument,
     deleteToVisitMonument,
+    getVisitedMonuments,
     addVisitedMonument,
     deleteVisitedMonument
 }
