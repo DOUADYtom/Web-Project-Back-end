@@ -218,11 +218,6 @@ const deleteUserById = asyncHandler(async (req, res) => {
 // @access Private (user concerned only)
 
 
-
-
-
-
-
 // @desc add a ToVisit monument in toVisitMonuments list
 // @route POST /users/:userId/toVisitMonument
 // @access Private
