@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const asyncHandler = require('express-async-handler');
 
 
+//TODO : add get Visited an add get ToVisit
+
 // @desc Get all users
 // @route GET /users
 // @access Private (admin only)
@@ -210,10 +212,152 @@ const deleteUserById = asyncHandler(async (req, res) => {
     }
 });
 
+
+// @desc Get all ToVisit monuments in toVisitMonuments list
+// @route GET /users/:id/toVisitMonuments
+// @access Private (user concerned only)
+
+
+
+
+
+
+
+// @desc add a ToVisit monument in toVisitMonuments list
+// @route POST /users/:userId/toVisitMonument
+// @access Private
+
+const addToVisitMonument = asyncHandler(async (req, res) => {
+    if (!req.params.userId) {
+        return res.status(400).json({message: "No userId find"});
+    }
+    if (!req.body.monumentId) {
+        return res.status(400).json({message: "No monumentId find"});
+    }
+    const userId = req.params.userId;
+    const monumentId = req.body.monumentId;
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(400).json({message: `No user with id ${userId}`});
+        }
+        if (user.toVisitMonuments.includes(monumentId)) {
+            return res.status(400).json({message: `The monument ${monumentId} is already in the list of monuments to visit`});
+        }
+        user.toVisitMonuments.push(monumentId);
+        listUpdated = await user.save();
+        if (!listUpdated) {
+            return res.status(400).json({message: `The monument ${monumentId} has not been added to the list of monuments to visit`});
+        }
+        res.status(200).json({message: `The monument ${monumentId} has been added to the list of monuments to visit`});
+    } catch {
+        return res.status(500).json({message: "Internal database error"});
+    }
+});
+
+// @desc remove a ToVisit monument from toVisitMonuments list
+// @route DELETE /users/:userId/toVisitMonument
+// @access Private
+
+const deleteToVisitMonument = asyncHandler(async (req, res) => {
+    if (!req.params.userId) {
+        return res.status(400).json({message: "No userId find"});
+    }
+    if (!req.body.monumentId) {
+        return res.status(400).json({message: "No monumentId find"});
+    }
+    const userId = req.params.userId;
+    const monumentId = req.body.monumentId;
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(400).json({message: `No user with id ${userId}`});
+        }
+
+        const toVisitMonuments = user.toVisitMonuments;
+        if (!toVisitMonuments.includes(monumentId)) {
+            return res.status(400).json({message: `The monument ${monumentId} is not in the list of monuments to visit`});
+        }
+
+        //delete the monument from the list
+        user.toVisitMonuments.pull(monumentId);
+        await user.save();
+        res.status(200).json({message: `The monument ${monumentId} has been deleted from the list of monuments to visit`});
+    } catch {
+        return res.status(500).json({message: "Internal database error"});
+    }
+});
+
+// @desc add a visited monument in monumentsVisited list
+// @route POST /users/:userId/toVisitMonument
+// @access Private
+
+const addVisitedMonument = asyncHandler(async (req, res) => {
+    if (!req.params.userId) {
+        return res.status(400).json({message: "No userId find"});
+    }
+    if (!req.body.monumentId) {
+        return res.status(400).json({message: "No monumentId find"});
+    }
+    const userId = req.params.userId;
+    const monumentId = req.body.monumentId;
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(400).json({message: `No user with the id ${userId}`});
+        }
+        if (user.monumentsVisited.includes(monumentId)) {
+            return res.status(400).json({message: `The monument ${monumentId} is already in the list`});
+        }
+        user.monumentsVisited.push(monumentId);
+        listUpdated = await user.save();
+        if (!listUpdated) {
+            return res.status(400).json({message: `The monument ${monumentId} has not been added to the monumentsVisited`});
+        }
+        res.status(200).json({message: `The monument ${monumentId} has been added to the list of monuments visited`});
+    } catch {
+        return res.status(500).json({message: "Internal database error"});
+    }
+});
+
+// @desc delete a visited monument in monumentsVisited list
+// @route DELETE /users/:userId/toVisitMonuments/:monumentId
+// @access Private
+
+const deleteVisitedMonument = asyncHandler(async (req, res) => {
+
+    if (!req.params.userId) {
+        return res.status(400).json({message: "No userId find"});
+    }
+    if (!req.body.monumentId) {
+        return res.status(400).json({message: "No monumentId find"});
+    }
+    const userId = req.params.userId;
+    const monumentId = req.body.monumentId;
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(400).json({message: `No user with the id ${userId}`});
+        }
+        user.monumentsVisited.pull(monumentId);
+        listUpdated = await user.save();
+        if (!listUpdated) {
+            return res.status(400).json({message: `The monument ${monumentId} has not been deleted from the monumentsVisited`});
+        }
+        res.status(200).json({message: `The monument ${monumentId} has been deleted from the list of monuments visited`});
+    } catch {
+        return res.status(500).json({message: "Internal database error"});
+    }
+});
+
 module.exports = {
     createNewUser,
     getUserById,
     getAllUsers,
     updateUserById,
-    deleteUserById
+    deleteUserById,
+    addToVisitMonument,
+    deleteToVisitMonument,
+    addVisitedMonument,
+    deleteVisitedMonument
 }

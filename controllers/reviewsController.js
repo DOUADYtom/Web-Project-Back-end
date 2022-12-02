@@ -1,15 +1,21 @@
 const Review = require('../models/Review');
 const asyncHandler = require('express-async-handler');
 
+//TODO: ReviewByUser (get all reviews of a user)
+
 const getReviewsByMonumentId = asyncHandler(async (req, res) => {
     // TODO limit the number of reviews returned
     // TODO sort the reviews by date
+
+    const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
+    const sort = req.query.sort ? req.query.sort : desc;
+
     if (!req.params.monumentId) {
         return res.status(400).json({message: "No monumentId find"});
-    }
+    }   
     const monumentId = req.params.monumentId;
     try {
-        const reviews = await Review.find({monumentId: monumentId}).lean().exec();
+        const reviews = await Review.find({monumentId: monumentId}).limit(limit).lean();
         if (!reviews) {
             return res.status(400).json({message: `No reviews for the monument ${monumentId}`});
         }

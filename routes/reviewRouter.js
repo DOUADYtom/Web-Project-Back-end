@@ -3,10 +3,8 @@ const router = express.Router();
 const reviewsController = require('../controllers/reviewsController');
 const verifyJWT = require('../middlewares/verifyJWT');
 
-router.use(verifyJWT);
-
 router.route('/')
     .get(reviewsController.getReviewsByMonumentId)
-    .post(reviewsController.createNewReview);
+    .post(verifyJWT, reviewsController.createNewReview);
 
 module.exports = router;
