@@ -3,9 +3,6 @@ const Review = require('../models/Review');
 const bcrypt = require('bcrypt');
 const asyncHandler = require('express-async-handler');
 
-
-//TODO : add get Visited an add get ToVisit
-
 // @desc Get all users
 // @route GET /users
 // @access Private (admin only)
@@ -27,12 +24,20 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @access Private (admin and user concerned only)
 
 const getUserById = asyncHandler(async (req, res) => {
+    // mode : 0 = all, 1 = user(name)
+    const mode = req.query.mode ? parseInt(req.query.mode) : 0;
+
     if (!req.params.id) {
         return res.status(400).json({message: "No id find"});
     }
     const id = req.params.id;
     try {
-        const user = await User.findById(id).select('-password').lean().exec();
+        if (mode == 1){
+            const user = await User.findById(id).select('username').lean().exec();
+        }else{
+            const user = await User.findById(id).select('-password').lean().exec();
+        }
+        
         if (!user) {
             return res.status(400).json({message: `No user with id ${id}`});
         }

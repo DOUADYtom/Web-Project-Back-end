@@ -5,6 +5,7 @@ const monumentSchema = new mongoose.Schema({
     description: {type: String, default: ""},
     images: {type: [String], default: []},
     country: {type: String, default: ""},
+    countryCode: {type: String, default: ""}, 
     city: {type: String, default: ""},
     tags: {type: [String], default: []},
     free: {type: Boolean, default: false},

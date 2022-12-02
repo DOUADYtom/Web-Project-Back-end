@@ -6,13 +6,20 @@ const asyncHandler = require('express-async-handler');
 // @access Public
 
 const getAllMonuments = asyncHandler(async (req, res) => {
-    // mode : 0 = all, 1 = element(name, images, country, countryCode, city, avgRating)
+    // mode : 0 = all, 1 = monument(name, images, country, countryCode, city, avgRating)
     const mode = req.query.mode ? parseInt(req.query.mode) : 0;
     const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
 
+    let sortType = req.query.sortType ? parseInt(req.query.sortType) : -1;
+
+    if (!(sortType === 1)) {
+        sortType = -1;
+    }
+
     let sort = req.query.sort ? req.query.sort : "date";
-    // mostViewed, mostLiked, mostRecent, mustVisited, mustToBeVisited, mostTrend
-    const sortModes = ['date', 'mostViewed', 'mostLiked', 'mostRecent', 'mustVisited', 'mustToBeVisited', 'mostTrend'];
+    // mostViewed, mostLiked, mostRecent, mustVisited, mustToBeVisited
+    // TODO : mostTrending
+    const sortModes = ['date', 'mostViewed', 'mostReviewed', 'mostLiked', 'mustVisited', 'mustToBeVisited'];
 
     if (!sortModes.includes(sort)){
         sort = "date";
@@ -21,25 +28,28 @@ const getAllMonuments = asyncHandler(async (req, res) => {
     let sortBy;
     switch(sort) {
         case "date":
-            sortBy = {"createdAt": -1};
+            sortBy = { "createdAt": sortType };
+            break;
+        case "name":
+            sortBy = { "name": sortType };
             break;
         case "mostViewed":
-            sortBy = { "stats.nbViews": -1 };
+            sortBy = { "stats.nbViews": sortType };
             break;
         case "mostLiked":
-            sortBy = { "stats.avgRating": -1 };
+            sortBy = { "stats.avgRating": sortType };
             break;
-        case "mostRecent":
-            sortBy = { "stats.nbReviews": -1 };
+        case "mostReviewed":
+            sortBy = { "stats.nbReviews": sortType };
             break;
         case "mustVisited":
-            sortBy = { "stats.visited": -1 };
+            sortBy = { "stats.visited": sortType };
             break;
         case "mustToBeVisited":
-            sortBy = { "stats.toBeVisited": -1 };
+            sortBy = { "stats.toBeVisited": sortType };
             break;
         default:
-            sortBy = {"createdAt": -1};
+            sortBy = { "createdAt": sortType };
     } 
 
     try {
@@ -47,7 +57,7 @@ const getAllMonuments = asyncHandler(async (req, res) => {
         if (mode == 1){ // select only name, images, country, countryCode, city, avgRating
             monuments = await Monument.find().sort(sortBy).select('name images country countryCode city stats.avgRating').lean().limit(limit);
         }else if (mode == 0){ // select all
-            monuments = await Monument.find().sort(sortBy).limit(limit).lean();
+            monuments = await Monument.find().sort(sortBy).limit(limit);
         }
         res.status(200).json(monuments);
     } catch {
@@ -91,6 +101,7 @@ const createNewMonument = asyncHandler(async (req, res) => {
         (req.body.description !== undefined && typeof req.body.description !== 'string') ||
         (req.body.images !== undefined && (!Array.isArray(req.body.images) || !matchType(req.body.images, 'string'))) ||
         (req.body.country !== undefined && typeof req.body.country !== 'string') ||
+        (req.body.countryCode !== undefined && typeof req.body.countryCode !== 'string') ||
         (req.body.city !== undefined && typeof req.body.city !== 'string') ||
         (req.body.tags !== undefined && (!Array.isArray(req.body.tags) || !matchType(req.body.tags, 'string'))) ||
         (req.body.free !== undefined && typeof req.body.free !== 'boolean');
@@ -123,6 +134,7 @@ const updateMonumentById = asyncHandler(async (req, res) => {
         (req.body.description !== undefined && typeof req.body.description !== 'string') ||
         (req.body.images !== undefined && (!Array.isArray(req.body.images) || !matchType(req.body.images, 'string'))) ||
         (req.body.country !== undefined && typeof req.body.country !== 'string') ||
+        (req.body.countryCode !== undefined && typeof req.body.countryCode !== 'string') ||
         (req.body.city !== undefined && typeof req.body.city !== 'string') ||
         (req.body.tags !== undefined && (!Array.isArray(req.body.tags) || !matchType(req.body.tags, 'string'))) ||
         (req.body.free !== undefined && typeof req.body.free !== 'boolean');
