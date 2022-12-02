@@ -8,16 +8,17 @@ router.route('/')
     .get(verifyJWT, usersController.getAllUsers)
     .post(usersController.createNewUser);
 
-router.route('/visited/:id', verifyJWT)
-    .get(usersController.getVisitedMonumentsByUserId)
+router.use(verifyJWT);
+
+router.route('/visited/:id')
     .post(usersController.addVisitedMonument)
     .delete(usersController.deleteVisitedMonument);
 
-router.route('/toVisit/:id', verifyJWT)
+router.route('/toVisit/:id')
     .post(usersController.addToVisitMonument)
     .delete(usersController.deleteToVisitMonument);
 
-router.route('/:id', verifyJWT)
+router.route('/:id')
     .get(usersController.getUserById)
     .patch(usersController.updateUserById)
     .delete(usersController.deleteUserById);
