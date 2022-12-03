@@ -21,6 +21,53 @@
             <p>Private endpoint, accessible by the user corresponding to the id parameter and admin users</p>
             <p>Use to delete a user corresponding to the id parameter</p>
         </section>
+        <h2>Authentication endpoints</h2>
+        <section>
+            <h3>POST /auth/login</h3>
+            <p>Public endpoint</p>
+            <p>Use to login, the body of the request must have the following attributes : (TODO)</p>
+            <h3>POST /auth/logout</h3>
+            <p>Private endpoint</p>
+            <p>Use to logout</p>
+        </section>
+        <h2>Monument enpoints</h2>
+        <section>
+            <h3>GET /monuments</h3>
+            <p>Public endpoint</p>
+            <p>Use to get all monuments</p>
+            <p>Limit and Modes to restrict select</p>
+            <h3>GET /monuments/$id</h3>
+            <p>Public endpoint</p>
+            <p>Use to get a monument corresponding to the id parameter</p>
+            <h3>POST /monuments</h3>
+            <p>Private endpoint, accessible by admin users</p>
+            <p>Use to create a monument, the body of the request must have the following attributes : (TODO)</p>
+            <h3>PATCH /monuments/$id</h3>
+            <p>Private endpoint, accessible by admin users</p>
+            <p>Use to update a monument corresponding to the id parameter, the body of the request should at least one of these attributes : (TODO) </p>
+            <h3>DELETE /monuments/$id</h3>
+            <p>Private endpoint, accessible by admin users</p>
+            <p>Use to delete a monument corresponding to the id parameter</p>
+        </section>
+        <h2>Review enpoints</h2>
+        <section>
+            <h3>GET /reviews</h3>
+            <p>Public endpoint</p>
+            <p>Use to get all reviews</p>
+            <p>Limit and Modes to restrict select</p>
+            <h3>GET /reviews/$id</h3>
+            <p>Public endpoint</p>
+            <p>Use to get a review corresponding to the id parameter</p>
+            <h3>POST /reviews</h3>
+            <p>Private endpoint, accessible by logged users</p>
+            <p>Use to create a review, the body of the request must have the following attributes : (TODO)</p>
+            <h3>PATCH /reviews/$id</h3>
+            <p>Private endpoint, accessible by the user corresponding to the id parameter</p>
+            <p>Use to update a review corresponding to the id parameter, the body of the request should at least one of these attributes : (TODO) </p>
+            <h3>DELETE /reviews/$id</h3>
+            <p>Private endpoint, accessible by the user corresponding to the id parameter and admin users</p>
+            <p>Use to delete a review corresponding to the id parameter</p>
+        </section>
     </section>
 </body>
 </html>

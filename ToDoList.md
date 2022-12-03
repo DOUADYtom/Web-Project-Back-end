@@ -10,6 +10,7 @@
 7. - [x] Monument get, Public
 8. - [x] Monument get filtered, Public
 9. - [ ] Search Monument by everything sort them by most Relevant, Public
+10. - [ ] Search Monument where tag is close to another Monument, Public 
 
 10. - [x] Review creation, Private to user
 11. - [x] Review delete, Private to concerned user and admin

@@ -1,5 +1,7 @@
 const Monument = require('../models/Monument');
 const asyncHandler = require('express-async-handler');
+const Fuse = require('fuse.js');
+const { search } = require('../routes/monumentRouter');
 
 // @desc Create a new monument
 // @route POST /monument
@@ -9,6 +11,7 @@ const getAllMonuments = asyncHandler(async (req, res) => {
     // mode : 0 = all, 1 = monument(name, images, country, countryCode, city, avgRating)
     const mode = req.query.mode ? parseInt(req.query.mode) : 0;
     const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
+    const search = req.query.search ? req.query.search : undefined;
 
     let sortType = req.query.sortType ? parseInt(req.query.sortType) : -1;
 
@@ -59,6 +62,48 @@ const getAllMonuments = asyncHandler(async (req, res) => {
         }else if (mode == 0){ // select all
             monuments = await Monument.find().sort(sortBy).limit(limit);
         }
+
+        if (!monuments) {
+            return res.status(400).json({message: `The monuments could not be find`});
+        }
+
+        if (search){
+            console.log(search);
+            console.log(monuments);
+            const options = {
+                keys: [{
+                    name : 'name',
+                    weight: 0.3
+                },
+                {
+                    name : 'country',
+                    weight: 0.2
+                },
+                {
+                    name : 'city',
+                    weight: 0.1
+                },
+                {
+                    name : 'tags',
+                    weight: 0.25   
+                },
+                {
+                    name : 'description',
+                    weight: 0.15
+                }],
+                threshold: 0.4,
+                includeScore: true,
+                useExtendedSearch: true,
+                isCaseSensitive: false,
+                findAllMatches: true,
+                distance: 200,
+                location: 0
+            };
+            const fuse = new Fuse(monuments, options);
+            monuments = fuse.search(search);
+            console.log(monuments);
+        }
+
         res.status(200).json(monuments);
     } catch {
         return res.status(500).json({message: "Internal database error"});
@@ -76,7 +121,7 @@ const getMonumentById = asyncHandler(async (req, res) => {
     }
     const id = req.params.id;
     try {
-        const monument = await Monument.findById(id).exec();
+        const monument = await Monument.findById(id).lean().exec();
         if (!monument) {
             return res.status(400).json({message: `The searched monument with the id ${id} does not exist`});
         }

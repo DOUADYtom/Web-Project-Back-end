@@ -28,4 +28,5 @@ const monumentSchema = new mongoose.Schema({
     }
 }, {collection: "Monuments", timestamps: true});
 
+
 module.exports = mongoose.model("Monument", monumentSchema);
