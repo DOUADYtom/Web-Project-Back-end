@@ -30,7 +30,7 @@ const login = asyncHandler(async (req, res) => {
                 "UserInfo": {
                     "id": user._id,
                     "email": user.email,
-                    "name": user.name,
+                    "name": user.username,
                     "roles": user.roles
                 }
             },
