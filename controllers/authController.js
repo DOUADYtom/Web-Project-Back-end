@@ -7,15 +7,15 @@ const asyncHandler = require('express-async-handler');
 // @route POST /auth
 // @access Public
 const login = asyncHandler(async (req, res) => {
-    const { username, password } = req.body;
-    const cond = (req.body.username !== undefined && typeof req.body.username !== 'string') ||
+    const { email, password } = req.body;
+    const cond = (req.body.email !== undefined && typeof req.body.email !== 'string') ||
         (req.body.password !== undefined && typeof req.body.password !== 'string');
     if (cond) {
         return res.status(400).json({message: "Please fill all the fields"});
     }
 
     try {
-        const user = await User.findOne({username}).lean().exec();
+        const user = await User.findOne({email}).lean().exec();
 
         if (!user || !user.roles) {
             return res.status(400).json({message: "User not found"});
@@ -29,7 +29,7 @@ const login = asyncHandler(async (req, res) => {
             {
                 "UserInfo": {
                     "id": user._id,
-                    "username": user.username,
+                    "email": user.email,
                     "roles": user.roles
                 }
             },
@@ -38,7 +38,7 @@ const login = asyncHandler(async (req, res) => {
         );
         const refreshToken = jwt.sign(
             {
-                "username": user.username
+                "email": user.email
             },
             process.env.REFRESH_TOKEN_SECRET,
             {expiresIn: '1d'}
@@ -81,7 +81,7 @@ const refresh = (req, res) => {
                 return res.status(403).json({message: "Forbidden"});
             }
 
-            const foundUser = await User.findOne({ username: decoded.username }).lean().exec();
+            const foundUser = await User.findOne({ email: decoded.email }).lean().exec();
             if (!foundUser) {
                 return res.status(401).json({message: "Unauthorized"});
             }

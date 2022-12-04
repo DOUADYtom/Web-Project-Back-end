@@ -21,7 +21,6 @@ const getAllMonuments = asyncHandler(async (req, res) => {
 
     let sort = req.query.sort ? req.query.sort : "date";
     // mostViewed, mostLiked, mostRecent, mustVisited, mustToBeVisited
-    // TODO : mostTrending
     const sortModes = ['date', 'mostViewed', 'mostReviewed', 'mostLiked', 'mustVisited', 'mustToBeVisited'];
 
     if (!sortModes.includes(sort)){
@@ -68,8 +67,6 @@ const getAllMonuments = asyncHandler(async (req, res) => {
         }
 
         if (search){
-            console.log(search);
-            console.log(monuments);
             const options = {
                 keys: [{
                     name : 'name',
@@ -91,7 +88,7 @@ const getAllMonuments = asyncHandler(async (req, res) => {
                     name : 'description',
                     weight: 0.15
                 }],
-                threshold: 0.4,
+                threshold: 0.3,
                 includeScore: true,
                 useExtendedSearch: true,
                 isCaseSensitive: false,
@@ -101,7 +98,6 @@ const getAllMonuments = asyncHandler(async (req, res) => {
             };
             const fuse = new Fuse(monuments, options);
             monuments = fuse.search(search);
-            console.log(monuments);
         }
 
         res.status(200).json(monuments);
