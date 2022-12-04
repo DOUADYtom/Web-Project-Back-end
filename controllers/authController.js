@@ -55,7 +55,6 @@ const login = asyncHandler(async (req, res) => {
 
         // send access token in response
         res.status(200).json({accessToken});
-        
 
     } catch (err) {
         return res.status(500).json({message: "Internal database error"});
@@ -107,7 +106,7 @@ const refresh = (req, res) => {
 const logout = (req, res) => {
     const cookies = req.cookies;
     if (!cookies?.refreshToken) {
-        return res.status(204); // No content
+        return res.status(204).json({message: 'No content'}); // No content
     }
 
     res.clearCookie('refreshToken', {httpOnly: true, secure: false, sameSite: 'None'});
