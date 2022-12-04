@@ -20,8 +20,7 @@ const DB_URI = (process.env.DB_USE_ONLINE==="true")?process.env.DB_URI:process.e
 // Middlewares
 
 app.use(logger);
-// app.use(cors(corsOptions)); // TODO : uncomment at the end of the project 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, 'public')));
