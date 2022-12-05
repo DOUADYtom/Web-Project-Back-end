@@ -1,7 +1,11 @@
 const User = require('../models/User');
+const Monument = require('../models/Monument');
 const Review = require('../models/Review');
 const bcrypt = require('bcrypt');
 const asyncHandler = require('express-async-handler');
+
+
+//TODO : add get Visited an add get ToVisit
 
 // @desc Get all users
 // @route GET /users
@@ -24,21 +28,12 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @access Private (admin and user concerned only)
 
 const getUserById = asyncHandler(async (req, res) => {
-    // mode : 0 = all, 1 = user(name)
-    const mode = req.query.mode ? parseInt(req.query.mode) : 0;
-
     if (!req.params.id) {
         return res.status(400).json({message: "No id find"});
     }
     const id = req.params.id;
     try {
-        let user;
-        if (mode == 1){
-            user = await User.findById(id).select('username').lean().exec();
-        }else{
-            user = await User.findById(id).select('-password').lean().exec();
-        }
-        
+        const user = await User.findById(id).select('-password').lean().exec();
         if (!user) {
             return res.status(400).json({message: `No user with id ${id}`});
         }
@@ -63,6 +58,11 @@ const createNewUser = asyncHandler(async (req, res) => {
         return res.status(400).json({message: "Please fill all the fields"});
     }
 
+    const pwdRegex = new RegExp("^(?=.[a-z])(?=.[A-Z])(?=.*[0-9])(?=.{8,20}$)");
+    if (!pwdRegex.test(password)) {
+        return res.status(400).json({message: "Password must contain at least 8 characters, one uppercase, one lowercase and one number"});
+    }
+
     const usernameRegex = new RegExp("^(?=.{3,20}$)");
     if (!usernameRegex.test(username)) {
         return res.status(400).json({message: "Username must contain at least 3 characters and less than 20"});
@@ -73,11 +73,6 @@ const createNewUser = asyncHandler(async (req, res) => {
         return res.status(400).json({message: "Please enter a valid email"});
     }
 
-    const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,20}$)");
-        
-    if (!passwordRegex.test(password)) {
-        return res.status(400).json({message: "Password must contain at least 8 characters, 1 uppercase, 1 lowercase and 1 number"});
-    }
     
     try {
         // check for duplicate username
@@ -328,8 +323,9 @@ const getVisitedMonuments = asyncHandler(async (req, res) => {
             return res.status(400).json({message: `No monumentsVisited found for user ${user.username}`});
         }
         res.status(200).json(toMonumentsVisited);
-    } catch {
-        return res.status(500).json({message: "Internal database error"});
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({message: "Internal database error", err});
     }
 });
 
